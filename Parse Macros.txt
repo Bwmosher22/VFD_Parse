@@ -1,0 +1,2019 @@
+Sub TestFunction()
+    Dim FLA As Double
+    Dim Amps As Double
+    Call GetMotorBOM(7.5, 400, 3, "ODP", 1.2, 4.5, 40000, 0)
+    'Debug.Print FLA
+    'Debug.Print Amps
+End Sub
+
+Function MatchModel(ByVal Sheet As String, ByRef BlankEntry As Integer)
+    Dim stringOne As String
+    Dim regexOne As Object
+    Dim theMatches As Object
+    Dim Match As Object
+    Dim Model As String
+    Dim Response
+    Set regexOne = New RegExp
+     
+    regexOne.Pattern = "MODEL: (\w+)\s"
+    regexOne.Global = True
+    regexOne.IgnoreCase = True
+    stringOne = Range(Sheet).Value
+    'Debug.Print stringOne
+     
+    Set Matches = regexOne.Execute(stringOne)
+    If Matches.Count = 0 Then
+        Response = MsgBox("No matches were found for Model Type. Manual entry required", vbQuestion Or vbOkayOnly)
+        BlankEntry = 1
+    Else
+        Model = Matches.Item(0).SubMatches(0)
+        'Debug.Print Model
+        MatchModel = Model
+    End If
+    
+End Function
+
+Function MatchVI(ByVal Sheet As String, ByRef BlankEntry As Integer)
+    Dim stringOne As String
+    Dim regexOne As Object
+    Dim theMatches As Object
+    Dim Match As Object
+    Dim VI As String
+    Dim Response
+    Set regexOne = New RegExp
+     
+    regexOne.Pattern = "VI: (\w+)"
+    regexOne.Global = True
+    regexOne.IgnoreCase = True
+    stringOne = Range(Sheet).Value
+    'Debug.Print stringOne
+     
+    Set Matches = regexOne.Execute(stringOne)
+    If Matches.Count = 0 Then
+        Response = MsgBox("No matches were found for VI type. Manual entry required", vbQuestion Or vbOkayOnly)
+        BlankEntry = 1
+    Else
+        VI = Matches.Item(0).SubMatches(0)
+        'Debug.Print VI
+        MatchVI = VI
+    End If
+    
+End Function
+
+Function MatchMount(ByVal Sheet As String, ByRef BlankEntry As Integer)
+    Dim stringOne As String
+    Dim regexOne As Object
+    Dim theMatches As Object
+    Dim Match As Object
+    Dim Mount As String
+    Dim Response
+    Set regexOne = New RegExp
+     
+    regexOne.Pattern = "MOUNTING:\s(\w)\s"
+    regexOne.Global = True
+    regexOne.IgnoreCase = True
+    stringOne = Range(Sheet).Value
+    'Debug.Print stringOne
+     
+    Set Matches = regexOne.Execute(stringOne)
+    If Matches.Count = 0 Then
+        Response = MsgBox("No matches were found for Mounting Type. Manual entry required", vbQuestion Or vbOkayOnly)
+        BlankEntry = 1
+    Else
+        Mount = Matches.Item(0).SubMatches(0)
+        'Debug.Print Mount
+        MatchMount = Mount
+    End If
+End Function
+
+Function MatchGas(ByVal Sheet As String, ByRef BlankEntry As Integer)
+    Dim stringOne As String
+    Dim regexOne As Object
+    Dim theMatches As Object
+    Dim Match As Object
+    Dim Gas As String
+    Dim Response
+    Set regexOne = New RegExp
+     
+    regexOne.Pattern = "GAS SUPPLY: (\w+)\s"
+    regexOne.Global = True
+    regexOne.IgnoreCase = True
+    stringOne = Range(Sheet).Value
+    'Debug.Print stringOne
+     
+    Set Matches = regexOne.Execute(stringOne)
+    If Matches.Count = 0 Then
+        Response = MsgBox("No matches were found for Gas Type. Manual entry required", vbQuestion Or vbOkayOnly)
+        BlankEntry = 1
+    Else
+        Gas = Matches.Item(0).SubMatches(0)
+        Gas = Switch(Gas = "Natural", "Nat Gas", Gas _
+                     = "Propane", "LP")
+        'Debug.Print Gas
+        MatchGas = Gas
+    End If
+    
+End Function
+
+Function MatchBlast(ByVal Sheet As String, ByRef BlankEntry As Integer)
+    Dim stringOne As String
+    Dim regexOne As Object
+    Dim theMatches As Object
+    Dim Match As Object
+    Dim Blast As String
+    Dim Response
+    Set regexOne = New RegExp
+     
+    regexOne.Pattern = "BLAST: (\w+)\sBlast"
+    regexOne.Global = True
+    regexOne.IgnoreCase = True
+    stringOne = Range(Sheet).Value
+    'Debug.Print stringOne
+     
+    Set Matches = regexOne.Execute(stringOne)
+    If Matches.Count = 0 Then
+        Response = MsgBox("No matches were found for Blast Type. Manual entry required", vbQuestion Or vbOkayOnly)
+        BlankEntry = 1
+    Else
+        Blast = Matches.Item(0).SubMatches(0)
+        Blast = Switch(Blast = "Down", "Downblast", Blast _
+                       = "Up", "Upblast", Blast _
+                       = "Horizontal", "Horizontal Blast")
+        'Debug.Print Blast
+        MatchBlast = Blast
+    End If
+    
+End Function
+
+Function MatchAirflow(ByVal Sheet As String, ByRef BlankEntry As Integer)
+    Dim stringOne As String
+    Dim regexOne As Object
+    Dim theMatches As Object
+    Dim Match As Object
+    Dim CFM As Long
+    Dim Response
+    Set regexOne = New RegExp
+     
+    regexOne.Pattern = "AIRFLOW: (\d*,\d*) CFM"
+    regexOne.Global = True
+    regexOne.IgnoreCase = True
+    stringOne = Range(Sheet).Value
+    'Debug.Print stringOne
+     
+    Set Matches = regexOne.Execute(stringOne)
+    If Matches.Count = 0 Then
+        Response = MsgBox("No matches were found for Airflow. Manual entry required", vbQuestion Or vbOkayOnly)
+        BlankEntry = 1
+    Else
+        CFM = Matches.Item(0).SubMatches(0)
+        'Debug.Print CFM
+        MatchAirflow = CFM
+    End If
+     
+End Function
+
+Function MatchAltitude(ByVal Sheet As String, ByRef BlankEntry As Integer)
+    Dim stringOne As String
+    Dim regexOne As Object
+    Dim theMatches As Object
+    Dim Match As Object
+    Dim Altitude As Double
+    Dim Response
+    Set regexOne = New RegExp
+     
+    regexOne.Pattern = "ELEVATION: (\d*\.?\d*) ft"
+    regexOne.Global = True
+    regexOne.IgnoreCase = True
+    stringOne = Range(Sheet).Value
+    'Debug.Print stringOne
+     
+    Set Matches = regexOne.Execute(stringOne)
+    If Matches.Count = 0 Then
+        Response = MsgBox("No matches were found for Altitude. Manual entry required", vbQuestion Or vbOkayOnly)
+        BlankEntry = 1
+    Else
+        Altitude = Matches.Item(0).SubMatches(0)
+        'Debug.Print Altitude
+        MatchAltitude = Altitude
+    End If
+     
+End Function
+Function MatchStatic(ByVal Sheet As String, ByRef BlankEntry As Integer)
+    Dim stringOne As String
+    Dim regexOne As Object
+    Dim theMatches As Object
+    Dim Match As Object
+    Dim Stat As Double
+    Dim Response
+    Set regexOne = New RegExp
+     
+    regexOne.Pattern = "STATIC PRESSURE: (\d*\.?\d*) ""WC"
+    regexOne.Global = True
+    regexOne.IgnoreCase = True
+    stringOne = Range(Sheet).Value
+    'Debug.Print stringOne
+     
+    Set Matches = regexOne.Execute(stringOne)
+    If Matches.Count = 0 Then
+        Response = MsgBox("No matches were found for Static Pressure. Manual entry required", vbQuestion Or vbOkayOnly)
+        BlankEntry = 1
+    Else
+        Stat = Matches.Item(0).SubMatches(0)
+        'Debug.Print Stat
+        MatchStatic = Stat
+    End If
+     
+End Function
+
+Function MatchVoltage(ByVal Sheet As String, ByRef BlankEntry As Integer)
+    Dim stringOne As String
+    Dim regexOne As Object
+    Dim theMatches As Object
+    Dim Match As Object
+    Dim Voltage As Integer
+    Dim Response
+    Set regexOne = New RegExp
+    
+    regexOne.Pattern = "VOLTAGE: (\d*)V/"
+    regexOne.Global = True
+    regexOne.IgnoreCase = True
+    stringOne = Range(Sheet).Value
+    'Debug.Print stringOne
+     
+    Set Matches = regexOne.Execute(stringOne)
+    If Matches.Count = 0 Then
+        Response = MsgBox("No matches were found for Voltage. Manual entry required", vbQuestion Or vbOkayOnly)
+        BlankEntry = 1
+    Else
+        Voltage = Matches.Item(0).SubMatches(0)
+        'Debug.Print Voltage
+        MatchVoltage = Voltage
+    End If
+     
+End Function
+
+Function MatchPhase(ByVal Sheet As String, ByRef BlankEntry As Integer)
+    Dim stringOne As String
+    Dim regexOne As Object
+    Dim theMatches As Object
+    Dim Match As Object
+    Dim Phase As Integer
+    Dim Response
+    Set regexOne = New RegExp
+    
+    regexOne.Pattern = "VOLTAGE: \d*V/(\d*)PH"
+    regexOne.Global = True
+    regexOne.IgnoreCase = True
+    stringOne = Range(Sheet).Value
+    'Debug.Print stringOne
+     
+    Set Matches = regexOne.Execute(stringOne)
+    If Matches.Count = 0 Then
+        Response = MsgBox("No matches were found for Phase. Manual entry required", vbQuestion Or vbOkayOnly)
+        BlankEntry = 1
+    Else
+        Phase = Matches.Item(0).SubMatches(0)
+        'Debug.Print Phase
+        MatchPhase = Phase
+    End If
+     
+End Function
+
+Function MatchHP(ByVal Sheet As String, ByRef BlankEntry As Integer)
+    Dim stringOne As String
+    Dim regexOne As Object
+    Dim theMatches As Object
+    Dim Match As Object
+    Dim HP As Double
+    Dim Response
+    Set regexOne = New RegExp
+    
+    regexOne.Pattern = "MOTOR: (\d*\.?\d*)\sHP"
+    regexOne.Global = True
+    regexOne.IgnoreCase = True
+    stringOne = Range(Sheet).Value
+    'Debug.Print stringOne
+     
+    Set Matches = regexOne.Execute(stringOne)
+    If Matches.Count = 0 Then
+        Response = MsgBox("No matches were found for HP. Manual entry required", vbQuestion Or vbOkayOnly)
+        BlankEntry = 1
+    Else
+        HP = Matches.Item(0).SubMatches(0)
+        'Debug.Print HP
+        MatchHP = HP
+    End If
+     
+End Function
+
+Function MatchJob(ByVal Sheet As String, ByRef BlankEntry As Integer)
+    Dim stringOne As String
+    Dim regexOne As Object
+    Dim theMatches As Object
+    Dim Match As Object
+    Dim Job As String
+    Dim Response
+    Set regexOne = New RegExp
+    
+    regexOne.Pattern = "JOB NAME: (.*)\sEpicor"
+    regexOne.Global = True
+    regexOne.IgnoreCase = True
+    stringOne = Range(Sheet).Value
+    'Debug.Print stringOne
+     
+    Set Matches = regexOne.Execute(stringOne)
+    If Matches.Count = 0 Then
+        Response = MsgBox("No matches were found for Job Name. Manual entry required", vbQuestion Or vbOkayOnly)
+        BlankEntry = 1
+    Else
+        Job = Matches.Item(0).SubMatches(0)
+        Job = RTrim(Job)
+        'Debug.Print Job
+        MatchJob = Job
+    End If
+     
+End Function
+
+Function MatchDate(ByVal Sheet As String, ByRef BlankEntry As Integer)
+    Dim stringOne As String
+    Dim regexOne As Object
+    Dim theMatches As Object
+    Dim Match As Object
+    Dim Day As String
+    Dim Response
+    Set regexOne = New RegExp
+    
+    regexOne.Pattern = "DATE: (\d\d/\d\d/\d+)"
+    regexOne.Global = True
+    regexOne.IgnoreCase = True
+    stringOne = Range(Sheet).Value
+    'Debug.Print stringOne
+     
+    Set Matches = regexOne.Execute(stringOne)
+    
+    'Check first cell as backup if not found otherwise
+    If Matches.Count = 0 Then
+        stringOne = Range("A1").Value
+        Set Matches = regexOne.Execute(stringOne)
+    End If
+    
+    If Matches.Count = 0 Then
+        Response = MsgBox("No matches were found for Job Date. Manual entry required", vbQuestion Or vbOkayOnly)
+        BlankEntry = 1
+    Else
+        Day = Matches.Item(0).SubMatches(0)
+        Day = RTrim(Day)
+        'Debug.Print Day
+        MatchDate = Day
+    End If
+    
+End Function
+
+Function MatchQuantity(ByVal Sheet As String, ByRef BlankEntry As Integer)
+    Dim stringOne As String
+    Dim regexOne As Object
+    Dim theMatches As Object
+    Dim Match As Object
+    Dim Quantity As Integer
+    Dim Response
+    Set regexOne = New RegExp
+    
+    regexOne.Pattern = "QUANTITY: (\d+)"
+    regexOne.Global = True
+    regexOne.IgnoreCase = True
+    stringOne = Range(Sheet).Value
+    'Debug.Print stringOne
+     
+    Set Matches = regexOne.Execute(stringOne)
+    If Matches.Count = 0 Then
+        Response = MsgBox("No matches were found for Quantity. Manual entry required", vbQuestion Or vbOkayOnly)
+        BlankEntry = 1
+    Else
+        Quantity = Matches.Item(0).SubMatches(0)
+        'Debug.Print Quantity
+        MatchQuantity = Quantity
+    End If
+    
+End Function
+
+Function MatchOrder(ByVal Sheet As String, ByRef BlankEntry As Integer)
+    Dim stringOne As String
+    Dim regexOne As Object
+    Dim theMatches As Object
+    Dim Match As Object
+    Dim Order As String
+    Dim Response
+    Set regexOne = New RegExp
+    
+    regexOne.Pattern = "Epicor #: (\d+)\s"
+    regexOne.Global = True
+    regexOne.IgnoreCase = True
+    stringOne = Range(Sheet).Value
+    'Debug.Print stringOne
+     
+    Set Matches = regexOne.Execute(stringOne)
+    If Matches.Count = 0 Then
+        Response = MsgBox("No matches were found for Shop Order (Epicor #). Manual entry required", vbQuestion Or vbOkayOnly)
+        BlankEntry = 1
+        'Allow easy reference of missing order numbers
+        MatchOrder = "000 - ORDER NUMBER MISSING"
+    Else
+        Order = Matches.Item(0).SubMatches(0)
+        'Debug.Print Order
+        MatchOrder = Order
+    End If
+
+End Function
+
+Function MatchSelection(ByVal Sheet As String, ByRef Motor As String, ByRef BlankEntry As Integer, _
+                        ByRef FullStr As String)
+    Dim stringOne As String
+    Dim regexOne As Object
+    Dim theMatches As Object
+    Dim Match As Object
+    Dim Selection As String
+    Dim Response
+    Set regexOne = New RegExp
+    
+    regexOne.Pattern = "08-\d+"
+    regexOne.Global = True
+    regexOne.IgnoreCase = True
+    Range(Sheet).Activate
+    
+    stringOne = ActiveCell.Value
+    Set Matches = regexOne.Execute(stringOne)
+    Do While Matches.Count = 0
+        If ActiveCell.Value = "TOTAL:" Then
+            Response = MsgBox("No matches were found for a 08-numbered motor for at least one order. Check the SMART Sheet for Errors or for a 90# Motor", vbQuestion Or vbOkayOnly)
+            BlankEntry = 1
+            Motor = "MISSING"
+            FullStr = "MISSING"
+            Exit Function
+        End If
+        
+        ActiveCell.Offset(rowOffset:=1).Activate
+        stringOne = ActiveCell.Value
+        Set Matches = regexOne.Execute(stringOne)
+    Loop
+    
+    'At this point, the 08-numbered cell is highlighted
+    Motor = ActiveCell.Value
+    FullStr = ActiveCell.Value
+    'Tab over 1 column to see if it contains ODP
+    ActiveCell.Offset(columnOffset:=1).Activate
+    FullStr = "(" & FullStr & ")" & " " & ActiveCell.Value
+    regexOne.Pattern = "ODP"
+    regexOne.Global = True
+    regexOne.IgnoreCase = True
+    stringOne = ActiveCell.Value
+    Set Matches = regexOne.Execute(stringOne)
+    
+    'If this doesn't contain ODP, then return TEFC. Otherwise, return ODP
+    If Matches.Count = 0 Then
+        Selection = "TEFC"
+    Else
+        Selection = "ODP"
+    End If
+     
+    MatchSelection = Selection
+
+End Function
+
+Function CountUnits()
+    Dim stringOne As String
+    Dim regexOne As Object
+    Dim theMatches As Object
+    Dim Match As Object
+    Dim Units As Integer
+    Dim Blanks As Integer
+    Dim Response
+    Set regexOne = New RegExp
+    
+    'Exported SMART Worksheets missing "SMART Unit Worksheet" Title
+    'Instead, search for something only these sheets would have
+    regexOne.Pattern = "UNIT WEIGHT:"
+    regexOne.Global = True
+    regexOne.IgnoreCase = True
+    Units = 0
+    ThisWorkbook.ActiveSheet.Activate
+    Range("A1").Activate
+    
+    'Set a threshold of 5 blanks before quitting search
+    Blanks = 0
+    'Find the beginning of the SMART worksheet
+    stringOne = ActiveCell.Value
+    Set Matches = regexOne.Execute(stringOne)
+    'No error-handling for this loop, sheet should contain at least 1 worksheet
+    Do While Blanks < 5
+        ActiveCell.Offset(rowOffset:=1).Activate
+        stringOne = ActiveCell.Value
+        'Add to Blank if found a blank
+        If ActiveCell.Value = "" Then Blanks = Blanks + 1
+        Set Matches = regexOne.Execute(stringOne)
+        'Add to Units if match found
+        If Matches.Count > 0 Then Units = Units + 1
+    Loop
+    
+    If Units = 0 Then
+        Response = MsgBox("No SMART Unit Worksheets were found. Check the SMART Sheet for Errors or excessive blanks", vbExclamation Or vbOkayOnly)
+    End If
+    CountUnits = Units
+    
+End Function
+
+Function GetUnitCell(ByVal TargetSheet As Integer)
+    Dim stringOne As String
+    Dim regexOne As Object
+    Dim theMatches As Object
+    Dim Match As Object
+    Dim CurrSheet As Integer
+    Dim UnitCell As String
+    Set regexOne = New RegExp
+    
+    'Each individual cell (AKA sheet, here) with relevant info will have this unique string
+    regexOne.Pattern = "UNIT WEIGHT:"
+    regexOne.Global = True
+    regexOne.IgnoreCase = True
+    ThisWorkbook.ActiveSheet.Activate
+    Range("A1").Activate
+    
+    'Initializations
+    CurrSheet = -1
+    UnitCell = ""
+        'Find the beginning of the SMART worksheet
+    stringOne = ActiveCell.Value
+    Set Matches = regexOne.Execute(stringOne)
+    'No error-handling for this loop, sheet should contain at least 1 worksheet
+    Do While CurrSheet < TargetSheet
+        ActiveCell.Offset(rowOffset:=1).Activate
+        stringOne = ActiveCell.Value
+        Set Matches = regexOne.Execute(stringOne)
+        If Matches.Count > 0 Then
+            CurrSheet = CurrSheet + 1
+        End If
+    Loop
+    UnitCell = ActiveCell.Address
+    GetUnitCell = UnitCell
+    
+End Function
+
+Function GetVFDCell(ByVal RefSheet As String)
+    Dim stringOne As String
+    Dim regexOne As Object
+    Dim theMatches As Object
+    Dim Match As Object
+    Dim VFDCell As String
+    Set regexOne = New RegExp
+    
+    'Begin by finding the cell below the "TOTAL:" cell
+    regexOne.Pattern = "TOTAL:"
+    regexOne.Global = True
+    regexOne.IgnoreCase = True
+    ThisWorkbook.ActiveSheet.Activate
+    Range(RefSheet).Activate
+    
+    'Initializations
+    VFDCell = ""
+    stringOne = ActiveCell.Value
+    Set Matches = regexOne.Execute(stringOne)
+    
+    'No error-handling for this loop, sheet should contain at least TOTAL: field
+    Do While Matches.Count = 0
+        ActiveCell.Offset(rowOffset:=1).Activate
+        stringOne = ActiveCell.Value
+        Set Matches = regexOne.Execute(stringOne)
+    Loop
+    'Find the next cell below it (should be VFD sheet if exists)
+    ActiveCell.Offset(rowOffset:=1).Activate
+    regexOne.Pattern = "MAXIMUM AIRFLOW:"
+    regexOne.Global = True
+    regexOne.IgnoreCase = True
+    stringOne = ActiveCell.Value
+    Set Matches = regexOne.Execute(stringOne)
+    
+    If Matches.Count = 0 Then
+        VFDCell = "NONE"
+    Else
+        VFDCell = ActiveCell.Address
+    End If
+    
+    GetVFDCell = VFDCell
+    
+End Function
+
+Function GetMotorBOM(ByVal HP As Double, ByVal Voltage As Integer, _
+                       ByVal Phase As Integer, ByVal Selection As String, _
+                       ByRef FLA As Double, ByRef Amps As Double, _
+                       ByRef Speed As Integer, ByRef BlankEntry As Integer)
+    Dim wkb As Workbook
+    Dim filterStr As String
+    Dim stringOne As String
+    Dim regexOne As Object
+    Dim theMatches As Object
+    Dim Match As Object
+    Dim found As Integer
+    Dim WasFound As Integer
+    Dim Response
+    Set regexOne = New RegExp
+    
+    'Create filter string to find the correct row
+    found = 0
+    WasFound = 0
+    filterStr = HP & "-" & Phase & "-" & Voltage
+    If Selection = "TEFC" Then
+        filterStr = filterStr & "-T"
+    End If
+    'Debug.Print filterStr
+    
+    
+    'Open the Motor_BOM_Tool workbook
+    Call closeFile(ThisWorkbook.path & "\Motor_BOM_Tool.xlsx")
+    Set wkb = Workbooks.Open(ThisWorkbook.path & "\Motor_BOM_Tool.xlsx")
+    wkb.Worksheets(1).Range("A1").Activate
+    
+    'Regex pattern ONLY expects single digit for phase
+    regexOne.Pattern = "\d*\.?\d+-\d-\d+"
+    regexOne.Global = True
+    regexOne.IgnoreCase = True
+    
+    'Find the beginning of the motor list
+    stringOne = ActiveCell.Value
+    Set Matches = regexOne.Execute(stringOne)
+    'No error-handling for this loop, sheet should contain at least 1 motor
+    Do While Matches.Count = 0
+        ActiveCell.Offset(rowOffset:=1).Activate
+        stringOne = ActiveCell.Value
+        Set Matches = regexOne.Execute(stringOne)
+    Loop
+    
+    'Search 3 phase section
+    Do While Matches.Count > 0
+        If ActiveCell.Value = filterStr Then
+            found = 1
+            Exit Do
+        End If
+        ActiveCell.Offset(rowOffset:=1).Activate
+        stringOne = ActiveCell.Value
+        Set Matches = regexOne.Execute(stringOne)
+    Loop
+    
+    'Search 1 phase section, only if not found in 3 phase
+    If found = 0 Then
+        'Find the beginning of the motor list
+        stringOne = ActiveCell.Value
+        Set Matches = regexOne.Execute(stringOne)
+        'No error-handling for this loop, sheet should contain at least 1 motor
+        Do While Matches.Count = 0
+            ActiveCell.Offset(rowOffset:=1).Activate
+            stringOne = ActiveCell.Value
+            Set Matches = regexOne.Execute(stringOne)
+        Loop
+        
+        'Search through 1 phase section
+        Do While Matches.Count > 0
+            If ActiveCell.Value = filterStr Then
+                found = 1
+                Exit Do
+            End If
+            ActiveCell.Offset(rowOffset:=1).Activate
+            stringOne = ActiveCell.Value
+            Set Matches = regexOne.Execute(stringOne)
+        Loop
+    End If
+    
+    'Print error message if the motor was not found at all
+    If found = 0 Then
+        Response = MsgBox("A " & filterStr & " motor wasn't found in the Motor_BOM_Tool sheet. Either make sure this is the intended selection, or create a new entry in the table", vbQuestion Or vbOKOnly)
+        BlankEntry = 1
+        FLA = 0
+        Amps = 0
+        Speed = 0
+    Else
+        'Use cell-referencing to find the FLA, RPM, and Amps. Catch blanks
+        ActiveCell.Offset(columnOffset:=1).Activate
+        If Not (ActiveCell.Value = "" Or ActiveCell.Value = " ") Then
+            FLA = ActiveCell.Value
+            WasFound = 1
+        Else
+            FLA = 0
+            WasFound = 0
+        End If
+        ActiveCell.Offset(columnOffset:=1).Activate
+        If Not (ActiveCell.Value = "" Or ActiveCell.Value = " ") Then
+            Amps = ActiveCell.Value
+            WasFound = 1
+        Else
+            FLA = 0
+            WasFound = 0
+        End If
+        ActiveCell.Offset(columnOffset:=1).Activate
+        If Not (ActiveCell.Value = "" Or ActiveCell.Value = " ") Then
+            Speed = ActiveCell.Value
+            WasFound = 1
+        Else
+            FLA = 0
+            WasFound = 0
+        End If
+    End If
+    wkb.Close
+    
+    If WasFound = 0 Then
+        Response = MsgBox("A " & filterStr & " motor exists but has not been spec'd in the Motor_BOM_Tool. Either create an entry in this sheet or manually enter motor info in the Drive sheet", vbQuestion Or vbOKOnly)
+        BlankEntry = 1
+    End If
+                       
+End Function
+
+Function MatchMaxPress(VFDCellAddr, ByRef BlankEntry As Integer)
+    Dim stringOne As String
+    Dim regexOne As Object
+    Dim theMatches As Object
+    Dim Match As Object
+    Dim MaxPress As Double
+    Dim Response
+    Set regexOne = New RegExp
+     
+    regexOne.Pattern = "MANIFOLD PRESSURE @ MAX: (\d*\.*\d*) ""WC"
+    regexOne.Global = True
+    regexOne.IgnoreCase = True
+    stringOne = Range(VFDCellAddr).Value
+    'Debug.Print stringOne
+     
+    Set Matches = regexOne.Execute(stringOne)
+    If Matches.Count = 0 Then
+        Response = MsgBox("No matches were found for Max Manifold Pressure. Manual entry required", vbQuestion Or vbOKOnly)
+        BlankEntry = 1
+    Else
+        MaxPress = Matches.Item(0).SubMatches(0)
+        'Debug.Print MaxPress
+        MatchMaxPress = MaxPress
+    End If
+    
+End Function
+
+Function MatchGeoPress(VFDCellAddr, ByRef BlankEntry As Integer)
+    Dim stringOne As String
+    Dim regexOne As Object
+    Dim theMatches As Object
+    Dim Match As Object
+    Dim GeoPress As Double
+    Dim Response
+    Set regexOne = New RegExp
+     
+    regexOne.Pattern = "MANIFOLD PRESSURE @ GEO: (\d*\.*\d*) ""WC"
+    regexOne.Global = True
+    regexOne.IgnoreCase = True
+    stringOne = Range(VFDCellAddr).Value
+    'Debug.Print stringOne
+     
+    Set Matches = regexOne.Execute(stringOne)
+    If Matches.Count = 0 Then
+        Response = MsgBox("No matches were found for Geo Manifold Pressure. Manual entry required", vbQuestion Or vbOKOnly)
+        BlankEntry = 1
+    Else
+        GeoPress = Matches.Item(0).SubMatches(0)
+        'Debug.Print GeoPress
+        MatchGeoPress = GeoPress
+    End If
+    
+End Function
+
+Function MatchVFDRef(VFDCellAddr, ByRef BlankEntry As Integer)
+    Dim stringOne As String
+    Dim regexOne As Object
+    Dim theMatches As Object
+    Dim Match As Object
+    Dim VFDRef As String
+    Dim Response
+    Set regexOne = New RegExp
+     
+    'Check for RPC "with" Type
+    regexOne.Pattern = "(RPC with On/Off)"
+    regexOne.Global = True
+    regexOne.IgnoreCase = True
+    stringOne = Range(VFDCellAddr).Value
+    Set Matches = regexOne.Execute(stringOne)
+    
+    'Check for RPC "without" Type
+    If Matches.Count = 0 Then
+        regexOne.Pattern = "(RPC without On/Off)"
+        regexOne.Global = True
+        regexOne.IgnoreCase = True
+        stringOne = Range(VFDCellAddr).Value
+        Set Matches = regexOne.Execute(stringOne)
+    End If
+    
+    'Check for 0-10VDC Type
+    If Matches.Count = 0 Then
+        regexOne.Pattern = "(0-10VDC Signal By Others)"
+        regexOne.Global = True
+        regexOne.IgnoreCase = True
+        Set Matches = regexOne.Execute(stringOne)
+    End If
+    
+    'Check for 04-20mA Type
+    If Matches.Count = 0 Then
+        regexOne.Pattern = "(4-20mA Signal By Others)"
+        regexOne.Global = True
+        regexOne.IgnoreCase = True
+        Set Matches = regexOne.Execute(stringOne)
+    End If
+    
+    'Check for Keypad Type
+    If Matches.Count = 0 Then
+        regexOne.Pattern = "(Keypad on VFD)"
+        regexOne.Global = True
+        regexOne.IgnoreCase = True
+        Set Matches = regexOne.Execute(stringOne)
+    End If
+    
+    'Check for EMS Type
+    If Matches.Count = 0 Then
+        regexOne.Pattern = "(Signal from EMS)"
+        regexOne.Global = True
+        regexOne.IgnoreCase = True
+        Set Matches = regexOne.Execute(stringOne)
+    End If
+    
+    'Check for Rotary Type
+    If Matches.Count = 0 Then
+        regexOne.Pattern = "(Rotary Switch - 2-4 speeds)"
+        regexOne.Global = True
+        regexOne.IgnoreCase = True
+        Set Matches = regexOne.Execute(stringOne)
+    End If
+    
+    'Check for alternate Rotary Type
+    If Matches.Count = 0 Then
+        regexOne.Pattern = "(Rotary Switch - 6 speeds)"
+        regexOne.Global = True
+        regexOne.IgnoreCase = True
+        Set Matches = regexOne.Execute(stringOne)
+    End If
+    
+    'Check for Pot Type
+    If Matches.Count = 0 Then
+        regexOne.Pattern = "(Manual Potentiometer)"
+        regexOne.Global = True
+        regexOne.IgnoreCase = True
+        Set Matches = regexOne.Execute(stringOne)
+    End If
+    
+    'Check for EFI Type
+    If Matches.Count = 0 Then
+        regexOne.Pattern = "(Up to 3 EFIs)"
+        regexOne.Global = True
+        regexOne.IgnoreCase = True
+        Set Matches = regexOne.Execute(stringOne)
+    End If
+    
+    'Check for alternate EFI Type
+    If Matches.Count = 0 Then
+        regexOne.Pattern = "(4 EFIs)"
+        regexOne.Global = True
+        regexOne.IgnoreCase = True
+        Set Matches = regexOne.Execute(stringOne)
+    End If
+    
+    If Matches.Count = 0 Then
+        Response = MsgBox("No valid matches were found for a line's VFD Reference. Manual entry required", vbQuestion Or vbOKOnly)
+        BlankEntry = 1
+    Else
+        VFDRef = Matches.Item(0).SubMatches(0)
+        'Debug.Print VFDRef
+        MatchVFDRef = VFDRef
+    End If
+    
+End Function
+
+Function MatchVFDParams(VFDCellAddr, AF1, AF2, AF3, AF4, ByRef BlankEntry As Integer)
+    Dim stringOne As String
+    Dim regexOne As Object
+    Dim theMatches As Object
+    Dim Match As Object
+    Dim ExtraParams As Integer
+    Dim Response
+    Set regexOne = New RegExp
+    
+    'Assume default of extra parameters
+    ExtraParams = 1
+    
+    'Check for Airflow Type
+    regexOne.Pattern = "AIRFLOW @ .*:\s*(\d+) CFM"
+    regexOne.Global = True
+    regexOne.IgnoreCase = True
+    stringOne = Range(VFDCellAddr).Value
+    'Debug.Print stringOne
+    Set Matches = regexOne.Execute(stringOne)
+    
+    'Check for Building Pressure Type
+    If Matches.Count = 0 Then
+        regexOne.Pattern = "SETPOINT: (\d*\.\d*) ""WC"
+        regexOne.Global = True
+        regexOne.IgnoreCase = True
+        Set Matches = regexOne.Execute(stringOne)
+    End If
+    
+    'Check for Keypad Type
+    If Matches.Count = 0 Then
+        regexOne.Pattern = "Keypad on VFD"
+        regexOne.Global = True
+        regexOne.IgnoreCase = True
+        Set Matches = regexOne.Execute(stringOne)
+        ExtraParams = 0
+    End If
+    
+    'Check for EMS Signal Type
+    If Matches.Count = 0 Then
+        regexOne.Pattern = "Signal from EMS"
+        regexOne.Global = True
+        regexOne.IgnoreCase = True
+        Set Matches = regexOne.Execute(stringOne)
+        ExtraParams = 0
+    End If
+    
+    If Matches.Count = 0 Then
+        Response = MsgBox("A line had a VFD Reference but was missing required parameters. Manual entry required", vbQuestion Or vbOKOnly)
+        BlankEntry = 1
+    ElseIf ExtraParams Then
+        If Matches.Count > 3 Then
+            AF4 = Matches.Item(3).SubMatches(0)
+        Else
+            AF4 = " "
+        End If
+        If Matches.Count > 2 Then
+            AF3 = Matches.Item(2).SubMatches(0)
+        Else
+            AF3 = " "
+        End If
+        If Matches.Count > 1 Then
+            AF2 = Matches.Item(1).SubMatches(0)
+        Else
+            AF2 = " "
+        End If
+        AF1 = Matches.Item(0).SubMatches(0)
+        'Debug.Print AF1
+        'Debug.Print AF2
+        'Debug.Print AF3
+        'Debug.Print AF4
+    End If
+    
+End Function
+
+Function MatchVFDExtra2(VFDCellAddr, AF5, AF6, ByRef BlankEntry As Integer)
+    Dim stringOne As String
+    Dim regexOne As Object
+    Dim theMatches As Object
+    Dim Match As Object
+    Dim Response
+    Set regexOne = New RegExp
+    
+    'Check for Airflow Type
+    regexOne.Pattern = "AIRFLOW @ .*:\s*(\d+) CFM"
+    regexOne.Global = True
+    regexOne.IgnoreCase = True
+    stringOne = Range(VFDCellAddr).Value
+    'Debug.Print stringOne
+    Set Matches = regexOne.Execute(stringOne)
+    'Debug.Print Matches.Item(0).SubMatches(0)
+    'Debug.Print Matches.Item(1).SubMatches(0)
+    'Debug.Print Matches.Item(2).SubMatches(0)
+    'Debug.Print Matches.Item(3).SubMatches(0)
+    'Debug.Print Matches.Item(4).SubMatches(0)
+    'Debug.Print Matches.Item(5).SubMatches(0)
+    
+    If Not (Matches.Count = 6) Then
+        Response = MsgBox("Two Rotary Switch positions were not found. Manual entry required", vbQuestion Or vbOKOnly)
+        BlankEntry = 1
+    Else
+        AF5 = Matches.Item(4).SubMatches(0)
+        AF6 = Matches.Item(5).SubMatches(0)
+        'Debug.Print AF5
+        'Debug.Print AF6
+    End If
+    
+End Function
+
+Function MatchVFD_EFI(VFDCellAddr, AF1, AF2, AF3, AF4, ByRef BlankEntry As Integer)
+    Dim stringOne As String
+    Dim regexOne As Object
+    Dim theMatches As Object
+    Dim Match As Object
+    Dim Response
+    Set regexOne = New RegExp
+    
+    'Count Airflow Type matches - this determines how many EFIs are present
+    regexOne.Pattern = "AIRFLOW @ .*:\s*(\d+) CFM"
+    regexOne.Global = True
+    regexOne.IgnoreCase = True
+    stringOne = Range(VFDCellAddr).Value
+    'Debug.Print stringOne
+    Set Matches = regexOne.Execute(stringOne)
+    
+    '3 @ symbols means 2 EFIs
+    If Matches.Count = 3 Then
+        AF1 = Matches.Item(0).SubMatches(0)
+        AF2 = Matches.Item(2).SubMatches(0)
+        AF3 = " "
+        AF4 = " "
+    '7 @ symbols means 3 EFIs
+    ElseIf Matches.Count = 7 Then
+        AF1 = Matches.Item(0).SubMatches(0)
+        AF2 = Matches.Item(3).SubMatches(0)
+        AF3 = Matches.Item(6).SubMatches(0)
+        AF4 = " "
+    '15 @ symbols means 4 EFIs
+    ElseIf Matches.Count = 15 Then
+        AF1 = Matches.Item(0).SubMatches(0)
+        AF2 = Matches.Item(4).SubMatches(0)
+        AF3 = Matches.Item(10).SubMatches(0)
+        AF4 = Matches.Item(14).SubMatches(0)
+    Else
+        Response = MsgBox("No valid matches were found for a line's EFI Parameters. Manual entry required", vbQuestion Or vbOKOnly)
+        BlankEntry = 1
+    End If
+    'Debug.Print AF1
+    'Debug.Print AF2
+    'Debug.Print AF3
+    'Debug.Print AF4
+    
+End Function
+
+Sub CreateVFDSheets()
+    Dim AF1 As Variant
+    Dim AF2 As Variant
+    Dim AF3 As Variant
+    Dim AF4 As Variant
+    Dim AF5 As Variant
+    Dim AF6 As Variant
+    Dim Altitude As Double
+    Dim Amps As Double
+    Dim BadDrive As Integer
+    Dim Blast As String
+    Dim BlankEntry As Integer
+    Dim CFM As Long
+    Dim ClosestGap As Integer
+    Dim Dat As String
+    Dim FLA As Double
+    Dim FullMotorString As String
+    Dim Gas As String
+    Dim GeoPress As Double
+    Dim HP As Double
+    Dim Initials As Variant
+    Dim Index As Integer
+    Dim Job As String
+    Dim MaxPress As Double
+    Dim MinHP As Double
+    Dim Model As String
+    Dim Motor As String
+    Dim Mount As String
+    Dim NewName As String
+    Dim NewFileName As String
+    Dim Phase As Integer
+    Dim Quantity As Integer
+    Dim Response
+    Dim RPM As Integer
+    Dim SDrivePath As String
+    Dim Selection As String
+    Dim Sheets As Integer
+    Dim SO As String
+    Dim SuborderStr As String
+    Dim SuborderInt As Integer
+    Dim Success As Integer
+    Dim TargetRPM As Variant
+    Dim TESP As Double
+    Dim UnitCellAddr As String
+    Dim VFDCellAddr As String
+    Dim VFDRef As String
+    Dim Voltage As Integer
+    Dim AllEmailFiles() As String
+    Dim PerfectEmailFiles() As String
+
+    Dim wkb As Workbook
+    NewName = "Temporary.xlsm"
+    SDrivePath = "S:\M Series Drive Selection\Drive Selection Sheets"
+    
+    
+    Sheets = CountUnits()  'Obtain the total number of sheets to be created
+    If Sheets = 0 Then Exit Sub
+    Success = 0  'Assume default failure of sheet creation
+    PIndex = 1  'Initialize the EmailFiles indexer
+    ReDim PerfectEmailFiles(Sheets) 'Redimension the PerfectEmailFiles array
+    ReDim AllEmailFiles(Sheets) 'Redimension the AllEmailFiles array
+    
+    'Iterate over each sheet
+    For i = 0 To Sheets - 1
+        'Assume sheet will contain no blanks, to be changed by each fn
+        BlankEntry = 0
+        BadDrive = 0
+        'Debug.Print i
+        'Create new, blank template from old template and open it
+        Call closeFile(ThisWorkbook.path & "\VFD_Template.xlsm")
+        Set wkb = Workbooks.Open(ThisWorkbook.path & "\VFD_Template.xlsm")
+        Call closeFile(Environ$("USERPROFILE") & "\Downloads" & "\" & NewName)
+        wkb.SaveCopyAs (Environ$("USERPROFILE") & "\Downloads" & "\" & NewName)
+        wkb.Close
+        Set wkb = Workbooks.Open(Environ$("USERPROFILE") & "\Downloads" & "\" & NewName)
+        
+        'Generate all VFD information using local Functions
+        UnitCellAddr = GetUnitCell(i)
+        'Debug.Print UnitCellAddr
+        Model = MatchModel(UnitCellAddr, BlankEntry)
+        If InStr(Model, "M") > 0 Then  'Only find rest of info if M-series
+            Altitude = MatchAltitude(UnitCellAddr, BlankEntry)
+            CFM = MatchAirflow(UnitCellAddr, BlankEntry)
+            Blast = MatchBlast(UnitCellAddr, BlankEntry)
+            Dat = MatchDate(UnitCellAddr, BlankEntry)
+            Gas = MatchGas(UnitCellAddr, BlankEntry)
+            Job = MatchJob(UnitCellAddr, BlankEntry)
+            HP = MatchHP(UnitCellAddr, BlankEntry)
+            Mount = MatchMount(UnitCellAddr, BlankEntry)
+            SO = MatchOrder(UnitCellAddr, BlankEntry)
+            Selection = MatchSelection(UnitCellAddr, Motor, BlankEntry, FullMotorString)
+            Phase = MatchPhase(UnitCellAddr, BlankEntry)
+            Quantity = MatchQuantity(UnitCellAddr, BlankEntry)
+            TESP = MatchStatic(UnitCellAddr, BlankEntry)
+            Voltage = MatchVoltage(UnitCellAddr, BlankEntry)
+            VI = MatchVI(UnitCellAddr, BlankEntry)
+            
+            Call GetMotorBOM(HP, Voltage, Phase, Selection, FLA, Amps, RPM, BlankEntry)
+            VFDCellAddr = GetVFDCell(UnitCellAddr)
+            'Check if VFD Sheet exists
+            If Not (VFDCellAddr = "NONE") Then
+                MaxPress = MatchMaxPress(VFDCellAddr, BlankEntry)
+                GeoPress = MatchGeoPress(VFDCellAddr, BlankEntry)
+                VFDRef = MatchVFDRef(VFDCellAddr, BlankEntry)
+                If InStr(VFDRef, "EFI") Then
+                    Call MatchVFD_EFI(VFDCellAddr, AF1, AF2, AF3, AF4, BlankEntry)
+                Else
+                    Call MatchVFDParams(VFDCellAddr, AF1, AF2, AF3, AF4, BlankEntry)
+                End If
+            End If
+        End If
+        
+        'FULL DEBUGGING: UNCOMMENT ANY BELOW DEBUG.PRINTS TO SEE VALUES
+        'Debug.Print "SMART Unit Worksheet #: " & (i + 1)
+        'Debug.Print "Altitude: " & Altitude & " ft."
+        'Debug.Print "Airflow: " & CFM & " CFM"
+        'Debug.Print "Blast: " & Blast
+        'Debug.Print "Date: " & Dat
+        'Debug.Print "Gas Supply: " & Gas
+        'Debug.Print "Job Name: " & Job
+        'Debug.Print "Model: " & Model
+        'Debug.Print "HP: " & HP
+        'Debug.Print "Motor: " & Motor
+        'Debug.Print "Motor Selection: " & Selection
+        'Debug.Print "Mount: " & Mount
+        'Debug.Print "Epicor #: " & SO
+        'Debug.Print "Phase: " & Phase
+        'Debug.Print "Quantity: " & Quantity
+        'Debug.Print "Static Pressure: " & TESP
+        'Debug.Print "Voltage: " & Voltage
+        'Debug.Print " "
+        'Debug.Print "Lookup Parameters:"
+        'Debug.Print "Baldor FLA: " & FLA
+        'Debug.Print "Unit Amps: " & Amps
+        'Debug.Print "RPM: " & RPM
+        'Debug.Print " "
+        'Debug.Print "SMART VFD Parameters:"
+        'Debug.Print "Manifold Pressure @ Geo: " & GeoPress
+        'Debug.Print "Manifold Pressure @ Geo: " & MaxPress
+        'Debug.Print "VFD Reference: " & VFDRef
+        'Debug.Print "Airflow Fan 1: " & AF1
+        'Debug.Print "Airflow Fan 2: " & AF2
+        'Debug.Print "Airflow Fan 3: " & AF3
+        'Debug.Print "Airflow Fan 4: " & AF4
+        'Debug.Print " "
+        
+        'Populate new sheet with all VFD information using local Functions if M unit
+        'Also add a slot for user initials
+        If InStr(Model, "M") > 0 Then
+            Success = Success + 1
+                    'Append suborder number to SO parameter
+            SuborderInt = Success
+            SuborderStr = Format(SuborderInt, "00")
+            SO = SO & "-" & SuborderStr
+            'Debug.Print SuborderStr
+            'THIS IS HARDCODED - CHANGE IF TEMPLATE CHANGES
+            Initials = InputBox("Enter your initials for the current line")
+            wkb.Worksheets("Sheet1").Range("A2") = Model
+            wkb.Worksheets("Sheet1").Range("B2") = Gas
+            wkb.Worksheets("Sheet1").Range("A3") = Blast
+            wkb.Worksheets("Sheet1").Range("C8") = Altitude
+            wkb.Worksheets("Sheet1").Range("B11") = CFM
+            wkb.Worksheets("Sheet1").Range("F11") = TESP
+            wkb.Worksheets("Sheet1").Range("B8") = HP
+            wkb.Worksheets("Sheet1").Range("D8") = Voltage
+            wkb.Worksheets("Sheet1").Range("E8") = Phase
+            wkb.Worksheets("Sheet1").Range("E1") = Job
+            wkb.Worksheets("Sheet1").Range("E2") = SO
+            wkb.Worksheets("Sheet1").Range("E3") = Quantity
+            wkb.Worksheets("Sheet1").Range("E4") = Dat
+            wkb.Worksheets("Sheet1").Range("F8") = FLA
+            wkb.Worksheets("Sheet1").Range("G8") = RPM
+            wkb.Worksheets("Sheet1").Range("A8") = Motor
+            wkb.Worksheets("Sheet1").Range("E5") = Initials
+            wkb.Worksheets("Sheet1").Range("B4") = Mount
+            wkb.Worksheets("Sheet1").Range("B5") = VI
+            'Create hidden cell with full motor info
+            wkb.Worksheets("Sheet1").Range("A50") = FullMotorString
+            wkb.Worksheets("Sheet1").Rows("50").RowHeight = 0
+            'Enter VFD info
+            If Not (VFDCellAddr = "NONE") Then
+                wkb.Worksheets("Sheet1").Range("E25") = GeoPress
+                wkb.Worksheets("Sheet1").Range("E26") = MaxPress
+                wkb.Worksheets("Sheet1").Range("B32") = AF1
+                wkb.Worksheets("Sheet1").Range("B33") = AF2
+                wkb.Worksheets("Sheet1").Range("B34") = AF3
+                wkb.Worksheets("Sheet1").Range("B35") = AF4
+                'TODO: Include if statement to ignore for everything except rotary 6
+                If VFDRef = "Rotary Switch - 6 speeds" Then
+                    Call MatchVFDExtra2(VFDCellAddr, AF5, AF6, BlankEntry)
+                    wkb.Worksheets("Sheet1").Range("B36") = AF5
+                    wkb.Worksheets("Sheet1").Range("B37") = AF6
+                End If
+                wkb.Worksheets("Sheet1").Range("E32") = VFDRef
+            'Otherwise, indicate absence of VFD reference
+            Else
+                wkb.Worksheets("Sheet1").Range("E32") = "NONE"
+                'Hide the VFD Section of the worksheet - it isn't needed
+                wkb.Worksheets("Sheet1").Rows("22:39").RowHeight = 0
+            End If
+            
+            'Check for EVI or IVI
+            If Not (VI = "Internal") Then
+                Application.DisplayAlerts = False
+                wkb.Worksheets("IVI").Delete
+                Application.DisplayAlerts = True
+            ElseIf VI = "Internal" Then
+                Call AddIVI(wkb, Model, Blast, HP, Selection, BlankEntry)
+            End If
+            
+            'Begin the drive selection process
+            TargetRPM = wkb.Worksheets("Sheet1").Range("V11").Value
+            If TargetRPM = "" Then  'Catch the error and abort
+                wkb.Worksheets("Sheet1").Activate
+                wkb.Worksheets("Sheet1").Range("D11").Activate
+                Response = MsgBox("There is nothing in the RPM field on current Drive sheet. Drive Selection unsuccessful", vbExclamation Or vbOkayOnly)
+                BlankEntry = 1
+                Exit Sub
+            'Otherwise, grab the actual RPM value instead of the string concatenation
+            Else
+                TargetRPM = wkb.Worksheets("Sheet1").Range("D11").Value
+            End If
+            
+            Call DriveSelection(Model, HP, Mount, Blast, Phase, TargetRPM, wkb, BadDrive)
+            ClosestGap = 5000  'Set high RPM initially
+            
+            'Catch missing drive error
+            If Not (BadDrive = 1) Then
+                Call FormatDrive(wkb, TargetRPM, ClosestGap)
+                'Throw warning if RPM is out-of-bounds
+                'Debug.Print CInt(Trim(wkb.Worksheets(1).Range("D11").Value))
+                'Debug.Print CInt(Trim(wkb.Worksheets(1).Range("AG3").Value))
+                If CInt(Trim(wkb.Worksheets(1).Range("D11").Value)) > CInt(Trim(wkb.Worksheets(1).Range("AG3").Value)) Then
+                    wkb.Worksheets(1).Activate
+                    wkb.Worksheets(1).Range("AG3").Activate
+                    Response = MsgBox("This line's Drive Selection RPM is too small, and has the potential to over-amp. Check the Drive Sheet for errors.", vbQuestion Or vbOkayOnly)
+                    BlankEntry = 1
+                End If
+                
+                'Throw warning if not Engineering Verified
+                If wkb.Worksheets(1).Range("AG11").Value = "" Or wkb.Worksheets(1).Range("AG11").Value = "No" Then
+                    Response = MsgBox("This line's Drive Selection is not Engineering Verified. Manual Drive Selection from the list on Sheet2 may be needed.", vbQuestion Or vbOkayOnly)
+                    BlankEntry = 1
+                End If
+            Else
+                'Notify that the drive is missing
+                BlankEntry = 1
+            End If
+            
+            'Check if a Drive Selection was actually placed
+            If wkb.Worksheets("Sheet1").Range("AG3").Value = "" Or _
+            wkb.Worksheets("Sheet1").Range("AG3").Value = "0" Then BlankEntry = 1
+            If wkb.Worksheets("Sheet1").Range("AG4").Value = "" Then BlankEntry = 1
+            If wkb.Worksheets("Sheet1").Range("AG5").Value = "" Then BlankEntry = 1
+            If wkb.Worksheets("Sheet1").Range("AG6").Value = "" Then BlankEntry = 1
+            If wkb.Worksheets("Sheet1").Range("AG7").Value = "" Then BlankEntry = 1
+            If wkb.Worksheets("Sheet1").Range("AG8").Value = "" Then BlankEntry = 1
+            If wkb.Worksheets("Sheet1").Range("AG9").Value = "" Then BlankEntry = 1
+            
+            'Save the worksheet using the built-in save module and close it
+            wkb.Worksheets("Sheet1").Activate
+            wkb.Worksheets("Sheet1").Range("A1").Activate
+            NewFileName = wkb.Worksheets("Sheet1").Range("E2").Value & " " & _
+                          wkb.Worksheets("Sheet1").Range("E1").Value & " - " & _
+                          wkb.Worksheets("Sheet1").Range("A2").Value & ".xlsm"
+            'Add file to PerfectEmailFiles if it is perfect, then increment idx
+            If (BlankEntry = 0) Then
+                PerfectEmailFiles(PIndex) = NewFileName
+                PIndex = PIndex + 1
+            End If
+            'Add file to AllEmailFiles regardless
+            AllEmailFiles(Success) = NewFileName
+            Call closeFile(SDrivePath & "\" & NewFileName)
+            wkb.Worksheets("Sheet1").Range("A40") = "save"
+            wkb.Close SaveChanges:=True
+        Else
+            'Abort: Model is not an M-unit
+            wkb.Activate
+            wkb.Close SaveChanges:=False
+            Response = MsgBox("Part of this order does not have an M-Unit. No sheet created for this line", vbQuestion Or vbOkayOnly)
+        End If
+
+    Next
+    If Success = 1 Then
+        MsgBox ("1 Unit Drive Sheet Successfully Created. Click OK for email options")
+    ElseIf Sheets = 0 Then
+        Response = MsgBox("Something went wrong. No SMART Unit Worksheets were found", vbExclamation Or vbOkayOnly)
+        Exit Sub
+    ElseIf Success = 0 Then
+        Response = MsgBox("Something went wrong. No Unit Drive Sheets successfully created", vbExclamation Or vbOkayOnly)
+        Exit Sub
+    ElseIf Success > 0 Then
+        MsgBox (Success & " Unit Drive Sheets Successfully Created. Click OK for email options")
+    End If
+    
+    PIndex = PIndex - 1  'PIndex will always be 1 more than needed
+    If PIndex = 0 Then
+        Response = MsgBox("No Unit Drive Sheets were perfectly filled. Would you like to open the sheets in question?", vbOKCancel)
+        If Response = vbOK Then Call OpenImperfects(PerfectEmailFiles, AllEmailFiles, PIndex, Success)
+    ElseIf PIndex = Success Then
+        Response = MsgBox("All Unit Drive Sheets were perfectly filled. Click OK to generate an email for these sheets, or Cancel to quit", vbOKCancel)
+        If Response = vbOK Then Call EmailFromCTRLM(PerfectEmailFiles, PIndex)
+    Else
+        Response = MsgBox(PIndex & " out of " & Success & " Unit Drive Sheets were perfectly filled. Press OK to view and/or edit the imperfect sheets, or Cancel to quit", vbOKCancel)
+        If Response = vbOK Then
+            Call OpenImperfects(PerfectEmailFiles, AllEmailFiles, PIndex, Success)
+        End If
+    End If
+End Sub
+
+Sub OpenImperfects(ByRef Perfects() As String, ByRef Alls() As String, ByVal Psize As Integer, ByVal Asize As Integer)
+    Dim CurrWkb As Workbook
+    Dim MatchFound As Integer
+    Dim SDrivePath As String
+    SDrivePath = "S:\M Series Drive Selection\Drive Selection Sheets\"
+    
+    'Check for shortcut
+    If Psize = 0 Then
+        For i = 1 To Asize
+            Set CurrWkb = Workbooks.Open(SDrivePath & Alls(i))
+        Next
+    'Partial success, check which ones worked
+    Else
+        'Outer loop checks each sheet in Alls
+        For i = 1 To Asize
+            MatchFound = 0  'Assume default unmatched
+            'Inner loop checks if All sheet is actually perfect
+            For j = 1 To Psize
+                If (Alls(i) = Perfects(j)) Then MatchFound = 1
+            Next
+            'If MatchFound is false (0), then we found an imperfect. Open it
+            If MatchFound = 0 Then Set CurrWkb = Workbooks.Open(SDrivePath & Alls(i))
+        Next
+        'Exit the loop and let the user manually edit and close out the sheets
+    End If
+End Sub
+
+Sub EmailFromCTRLM(ByRef FileList() As String, ByVal size As Integer)
+    Dim wkb As Workbook
+    Dim SDrivePath As String
+    Dim wkbList() As String
+    Dim currBody As String
+    Dim Response
+    Dim regexOne As Object
+    Dim theMatches As Object
+    Dim Match As Object
+    Set regexOne = New RegExp
+    ReDim wkbList(size)
+    currBody = ""
+    SDrivePath = "S:\M Series Drive Selection\Drive Selection Sheets\"
+    'closeFile should have already worked for all target files. No need to call again
+    For i = 1 To size
+        'Open each workbook and append to the body
+        Set wkb = Workbooks.Open(SDrivePath & FileList(i))
+        Call AppendBody(wkb, wkbList, i, currBody)
+        'Debug.Print wkbList(i)
+        wkb.Close SaveChanges:=False
+    Next
+    'Pull first available workbook's job name and cut off the hyphen (-01)
+    Set wkb = Workbooks.Open(wkbList(1))
+    Set wkst = wkb.Worksheets(1)
+    Subject = wkst.Range("E2")
+    'Filter Subject by decimal digits and reassign to Subject str
+    regexOne.Pattern = "(\d+)"
+    regexOne.Global = True
+    regexOne.IgnoreCase = True
+    Set Matches = regexOne.Execute(Subject)
+    'Error handling
+    If Matches.Count = 0 Then
+        Response = MsgBox("No valid Shop Order Number found on Drive Sheet. Check the sheet for errors.", vbExclamation Or vbOkayOnly)
+        Exit Sub
+    End If
+    Subject = Matches.Item(0).SubMatches(0)
+    Subject = Subject & " " & wkst.Range("E1").Value & " - Drive Selection Complete"
+    wkb.Close SaveChanges:=False
+    'After body is fully created, send email with pseudo fn
+    'Debug.Print wkbList(1)
+    Call PseudoSendMailWithWkst(wkbList, currBody, Subject)
+End Sub
+
+Sub FormatDrive(ByRef VFDBook As Workbook, ByVal TargetRPM, ByRef ClosestGap)
+    Dim RPMStr As String
+    Dim RPMInt As Integer
+    Dim MSheave As String
+    Dim BSheave As String
+    Dim MBush As String
+    Dim BBush As String
+    Dim Belt As String
+    Dim Beltqty As String
+    Dim CurrHP As Double
+    Dim Turns As String
+    Dim Eng As String
+    Dim RowCounter As Integer
+    
+    VFDBook.Worksheets("Sheet2").Activate
+    VFDBook.Worksheets("Sheet2").Range("A2").Activate
+    RowCounter = 0
+    
+    'Use cell-referencing to condense needed info (per row)
+    Do While Not (ActiveCell.Value = "")
+        RowCounter = RowCounter + 1
+        ActiveCell.Offset(columnOffset:=2).Activate
+        CurrHP = ActiveCell.Value
+        ActiveCell.Offset(columnOffset:=5).Activate
+        RPMStr = ActiveCell.Value
+        If RPMStr = "" Then RPMStr = ActiveCell.Offset(columnOffset:=-3).Value
+        If Not (RPMStr = "") Then RPMInt = RPMStr Else RPMInt = 0
+        ActiveCell.Offset(columnOffset:=1).Activate
+        MSheave = ActiveCell.Value
+        ActiveCell.Offset(columnOffset:=1).Activate
+        MBush = ActiveCell.Value
+        ActiveCell.Offset(columnOffset:=1).Activate
+        Turns = ActiveCell.Value
+        ActiveCell.Offset(columnOffset:=1).Activate
+        BSheave = ActiveCell.Value
+        ActiveCell.Offset(columnOffset:=1).Activate
+        BBush = ActiveCell.Value
+        ActiveCell.Offset(columnOffset:=1).Activate
+        Belt = ActiveCell.Value
+        ActiveCell.Offset(columnOffset:=1).Activate
+        Beltqty = ActiveCell.Value
+        ActiveCell.Offset(columnOffset:=5).Activate
+        Eng = ActiveCell.Value
+        If Not (Eng = "") Then Eng = Switch(Eng = "0", "No", Eng = "1", "Yes") Else Eng = "No"
+        'If this is the first entry, enter it
+        If ClosestGap = 5000 Then
+            ClosestGap = Abs(RPMInt - TargetRPM)
+            VFDBook.Worksheets("Sheet1").Range("AG3") = RPMInt
+            VFDBook.Worksheets("Sheet1").Range("AG4") = MSheave
+            VFDBook.Worksheets("Sheet1").Range("AG5") = MBush
+            VFDBook.Worksheets("Sheet1").Range("AG6") = BSheave
+            VFDBook.Worksheets("Sheet1").Range("AG7") = BBush
+            VFDBook.Worksheets("Sheet1").Range("AG8") = Belt
+            VFDBook.Worksheets("Sheet1").Range("AG9") = Beltqty
+            VFDBook.Worksheets("Sheet1").Range("AG10") = Turns
+            VFDBook.Worksheets("Sheet1").Range("AG11") = Eng
+        'If tolerance is lowest yet, update the ideal choice
+        ElseIf ClosestGap > Abs(RPMInt - TargetRPM) And Not (TargetRPM > RPMInt) Then
+            ClosestGap = Abs(RPMInt - TargetRPM)
+            VFDBook.Worksheets("Sheet1").Range("AG3") = RPMInt
+            VFDBook.Worksheets("Sheet1").Range("AG4") = MSheave
+            VFDBook.Worksheets("Sheet1").Range("AG5") = MBush
+            VFDBook.Worksheets("Sheet1").Range("AG6") = BSheave
+            VFDBook.Worksheets("Sheet1").Range("AG7") = BBush
+            VFDBook.Worksheets("Sheet1").Range("AG8") = Belt
+            VFDBook.Worksheets("Sheet1").Range("AG9") = Beltqty
+            VFDBook.Worksheets("Sheet1").Range("AG10") = Turns
+            VFDBook.Worksheets("Sheet1").Range("AG11") = Eng
+        End If
+        'Start over, and offset
+        VFDBook.Worksheets("Sheet2").Range("A2").Activate
+        ActiveCell.Offset(rowOffset:=RowCounter).Activate
+    Loop
+    
+End Sub
+
+Sub DriveSelection(ByVal Model As String, ByVal HP As Double, ByVal Mount As String, _
+                   ByVal Blast As String, ByVal Phase As Integer, _
+                   ByVal TargetRPM As Variant, ByRef VFDSheet As Workbook, _
+                   ByRef BadDrive As Integer)
+    Dim wkb As Workbook
+    Dim rng As Range
+    Dim FoundItems As Integer
+    Dim Response
+    Dim RPM As Integer
+    
+    Call closeFile(ThisWorkbook.path & "\M_Drives.xlsx")
+    Set wkb = Workbooks.Open(ThisWorkbook.path & "\M_Drives.xlsx")
+    wkb.Activate
+    'Filter drives by unit size, hp, mount, blast, phase. RPM TBD within Sheet
+    RPM = TargetRPM
+    'Switch Blast to match syntactically
+    Blast = Switch(Blast = "Downblast", "D", Blast = "Upblast", "U", Blast = "Horizontal Blast", "H")
+    
+    With wkb.Worksheets(1).Range("A3:T4000")
+        .AutoFilter Field:=1, Criteria1:=Model
+        .AutoFilter Field:=3, Criteria1:=HP
+        .AutoFilter Field:=17, Criteria1:=Mount
+        .AutoFilter Field:=18, Criteria1:=Blast
+        .AutoFilter Field:=19, Criteria1:=Phase
+    End With
+    
+    With wkb.Worksheets(1).AutoFilter.Range
+        FoundItems = .Columns(1).SpecialCells(xlCellTypeVisible).Count
+    End With
+    
+    If wkb.Worksheets(1).AutoFilterMode = False Or FoundItems = 1 Then
+        Response = MsgBox("No acceptable drive was found. Drive Selection left blank", vbQuestion Or vbOkayOnly)
+        BadDrive = 1
+    Else
+        Set rng = wkb.Worksheets(1).AutoFilter.Range
+        rng.Copy VFDSheet.Worksheets("Sheet2").Range("A1")
+        VFDSheet.Worksheets("Sheet2").Columns("A:T").AutoFit
+        
+    End If
+    'Close and remove filters
+    wkb.Close SaveChanges:=False
+End Sub
+
+Function CopyContents(ByVal driveselectpath As String)
+    Dim smartfile As Variant
+    Dim Success As Integer
+    Dim wkb As Workbook
+    Dim Response
+    
+    smartfile = driveselectpath
+    If InStr(1, smartfile, "xlsx", vbTextCompare) < 1 Then Exit Function Else Success = 1
+    
+    Call closeFile(smartfile)
+    Set wkb = Workbooks.Open(smartfile)
+    
+    'Clear items in RegEx
+    ThisWorkbook.Worksheets("Sheet1").Activate
+    ActiveSheet.UsedRange.Select
+    Selection.ClearContents
+    Selection.UnMerge
+    Selection.Borders(xlDiagonalDown).LineStyle = xlNone
+    Selection.Borders(xlDiagonalUp).LineStyle = xlNone
+    Selection.Borders(xlEdgeLeft).LineStyle = xlNone
+    Selection.Borders(xlEdgeTop).LineStyle = xlNone
+    Selection.Borders(xlEdgeBottom).LineStyle = xlNone
+    Selection.Borders(xlEdgeRight).LineStyle = xlNone
+    Selection.Borders(xlInsideVertical).LineStyle = xlNone
+    Selection.Borders(xlInsideHorizontal).LineStyle = xlNone
+    ActiveCell.Select
+    'Copy new contents over
+    wkb.Worksheets(1).Activate
+    wkb.ActiveSheet.UsedRange.Select
+    Selection.Copy ThisWorkbook.Worksheets("Sheet1").Range("A1")
+    wkb.Close
+    ThisWorkbook.Worksheets("Sheet1").Activate
+    Range("A1").Activate
+    
+    CopyContents = Success
+    
+End Function
+
+Sub AddIVI(ByRef VFDSheet As Workbook, ByVal Model As String, _
+           ByVal Blast As String, ByVal HP As Double, _
+           ByVal Selection As String, ByRef BlankEntry As Integer)
+    Dim Response
+    
+    'Get Blast and Selection into usable form
+    Blast = Switch(Blast = "Upblast", "UB", Blast = "Downblast", "DB", Blast = _
+                  "Horizontal Blast", "HB")
+    Selection = Switch(Selection = "TEFC", "Yes", Selection = "ODP", "No")
+    With VFDSheet.Worksheets("IVI").Range("B4:E172")
+        .AutoFilter Field:=1, Criteria1:=Model
+        .AutoFilter Field:=2, Criteria1:=Blast
+        .AutoFilter Field:=3, Criteria1:=HP
+        .AutoFilter Field:=4, Criteria1:=Selection
+    End With
+    If VFDSheet.Worksheets("IVI").AutoFilterMode = False Then
+        Response = MsgBox("No acceptable IVI Entry was found. Manual IVI Selection needed", vbQuestion Or vbOkayOnly)
+        BlankEntry = 1
+    End If
+End Sub
+
+Sub closeFile(ByVal filename As String)
+'Safeguarding Function - Used to safely close file if already open
+    Dim fileNum As Integer
+    Dim errNum As Integer
+    Dim NeedsClosed As Integer
+    Dim Response
+    Dim wb As Workbook
+    
+    For Each wb In Workbooks
+        If InStr(1, filename, wb.Name, vbTextCompare) > 0 Then
+            'Debug.Print wb.Name
+            wb.Close SaveChanges:=True
+            Exit For
+        End If
+    Next
+    
+End Sub
+
+Sub ClearContentsAndReset()
+    'Clear items in RegEx
+    ThisWorkbook.Worksheets("Sheet1").Activate
+    ActiveSheet.UsedRange.Select
+    Selection.ClearContents
+    Selection.UnMerge
+    Selection.Borders(xlDiagonalDown).LineStyle = xlNone
+    Selection.Borders(xlDiagonalUp).LineStyle = xlNone
+    Selection.Borders(xlEdgeLeft).LineStyle = xlNone
+    Selection.Borders(xlEdgeTop).LineStyle = xlNone
+    Selection.Borders(xlEdgeBottom).LineStyle = xlNone
+    Selection.Borders(xlEdgeRight).LineStyle = xlNone
+    Selection.Borders(xlInsideVertical).LineStyle = xlNone
+    Selection.Borders(xlInsideHorizontal).LineStyle = xlNone
+    ActiveCell.Select
+    
+    'Insert a message prompting next use
+    Range("A1").Activate
+    ActiveCell.Select
+    With Selection.Font
+        .Name = "Times New Roman"
+        .size = 18
+        .Strikethrough = False
+        .Superscript = False
+        .Subscript = False
+        .OutlineFont = False
+        .Shadow = False
+        .Underline = xlUnderlineStyleNone
+        .ColorIndex = xlAutomatic
+        .TintAndShade = 0
+        .ThemeFont = xlThemeFontNone
+    End With
+    ActiveCell.Value = "Press CTRL+M to Begin Full Drive Selection"
+    With Selection.Interior
+        .Pattern = xlSolid
+        .PatternColorIndex = xlAutomatic
+        .Color = 65535
+        .TintAndShade = 0
+        .PatternTintAndShade = 0
+    End With
+    Selection.RowHeight = 100
+    Selection.ColumnWidth = 50
+    With Selection
+        .HorizontalAlignment = xlCenter
+        .VerticalAlignment = xlTop
+        .WrapText = True
+        .Orientation = 0
+        .AddIndent = False
+        .IndentLevel = 0
+        .ShrinkToFit = False
+        .ReadingOrder = xlContext
+        .MergeCells = False
+    End With
+    With Selection
+        .HorizontalAlignment = xlCenter
+        .VerticalAlignment = xlCenter
+        .WrapText = True
+        .Orientation = 0
+        .AddIndent = False
+        .IndentLevel = 0
+        .ShrinkToFit = False
+        .ReadingOrder = xlContext
+        .MergeCells = False
+    End With
+    Range("A2").Activate
+    ActiveCell.Select
+    With Selection.Font
+        .Name = "Times New Roman"
+        .size = 18
+        .Strikethrough = False
+        .Superscript = False
+        .Subscript = False
+        .OutlineFont = False
+        .Shadow = False
+        .Underline = xlUnderlineStyleNone
+        .ColorIndex = xlAutomatic
+        .TintAndShade = 0
+        .ThemeFont = xlThemeFontNone
+    End With
+    ActiveCell.Value = "Press CTRL+E to Create Email Template"
+    With Selection.Interior
+        .Pattern = xlSolid
+        .PatternColorIndex = xlAutomatic
+        .Color = 65535
+        .TintAndShade = 0
+        .PatternTintAndShade = 0
+    End With
+    Selection.RowHeight = 100
+    Selection.ColumnWidth = 50
+    With Selection
+        .HorizontalAlignment = xlCenter
+        .VerticalAlignment = xlTop
+        .WrapText = True
+        .Orientation = 0
+        .AddIndent = False
+        .IndentLevel = 0
+        .ShrinkToFit = False
+        .ReadingOrder = xlContext
+        .MergeCells = False
+    End With
+    With Selection
+        .HorizontalAlignment = xlCenter
+        .VerticalAlignment = xlCenter
+        .WrapText = True
+        .Orientation = 0
+        .AddIndent = False
+        .IndentLevel = 0
+        .ShrinkToFit = False
+        .ReadingOrder = xlContext
+        .MergeCells = False
+    End With
+    ThisWorkbook.Save
+    Range("A1").Activate
+End Sub
+
+Function PDFConvert(ByRef driveselectpath As String)
+    Dim Response
+    Dim prompt1 As String
+    Dim MyPath As String
+    Dim MyFile As String
+    Dim LatestFile As String
+    Dim LatestDate As Date
+    Dim LMD As Date
+    Dim wkb As Workbook
+    Dim wnd As Window
+    Dim App As Object
+    Dim btn
+
+    ChDrive "C"
+    ChDir Environ$("USERPROFILE") & "\Downloads\"
+    MyPath = Environ$("USERPROFILE") & "\Downloads\"
+   
+    Response = MsgBox("Click OK to open the PDF converter.", vbOKCancel)
+    If Response = vbCancel Then
+        Response = MsgBox("File read unsuccessful", vbOKOnly Or vbExclamation)
+        PDFConvert = 0
+        Exit Function
+    End If
+   
+    Call ThisWorkbook.FollowHyperlink("https://www.pdf2go.com/pdf-to-excel/", NewWindow:=True)
+   
+    'Debug.Print FileDateTime(MyPath & MyFile)
+    Application.Wait (Now + TimeValue("00:00:20"))
+    Response = MsgBox("Click OK to check for the new file, or Cancel to quit.", vbOKCancel)
+    If Response = vbOK Then
+        MyFile = Dir(MyPath & "*.xls", vbNormal)
+        If MyFile <> "" Then
+            LatestFile = MyFile
+            LatestDate = FileDateTime(MyPath & MyFile)
+            Do While MyFile <> ""
+                If FileDateTime(MyPath & MyFile) > LatestDate Then
+                    LatestFile = MyFile
+                    LatestDate = FileDateTime(MyPath & MyFile)
+                End If
+                MyFile = Dir
+            Loop
+            MyFile = LatestFile
+        End If
+        
+        prompt1 = "The newest downloaded file is """ & MyFile & """. "
+        prompt1 = prompt1 + "Click OK to perform Drive Selection on this file, or Cancel to quit."
+        Response = MsgBox(prompt1, vbOKCancel)
+        If Response = vbCancel Then
+            Response = MsgBox("File read unsuccessful", vbOKOnly Or vbExclamation)
+            PDFConvert = 0
+            Exit Function
+        End If
+        'Otherwise, assume user wants to use drive selection
+        driveselectpath = Environ$("USERPROFILE") & "\Downloads\" & MyFile
+        PDFConvert = 1
+    Else
+        Response = MsgBox("File read unsuccessful", vbOKOnly Or vbExclamation)
+        PDFConvert = 0
+        Exit Function
+    End If
+    'Debug.Print driveselectpath
+   
+End Function
+
+Sub Main()
+    Dim Success As Integer
+    Dim Response
+    Dim driveselectpath As String
+    Success = PDFConvert(driveselectpath)
+    If Not (Success = 1) Then
+        Response = MsgBox("PDF Conversion unsuccessful, try again", vbExclamation Or vbOkayOnly)
+        Exit Sub
+    End If
+    Success = CopyContents(driveselectpath)
+    If Not (Success = 1) Then
+        Response = MsgBox("File read unsuccessful, try again", vbExclamation Or vbOkayOnly)
+        Exit Sub
+    End If
+    Call CreateVFDSheets
+    Call ClearContentsAndReset
+End Sub
+
+Sub EmailFromCTRLE()
+    Dim fileArr As Variant
+    Dim Success As Integer
+    Dim wkb As Workbook
+    Dim wkst As Worksheet
+    Dim Response
+    Dim wkbList() As String
+    Dim currBody As String
+    Dim regexOne As Object
+    Dim theMatches As Object
+    Dim Match As Object
+    Set regexOne = New RegExp
+    
+    'Assume default failure
+    Success = 0
+    Response = MsgBox("Click OK to select ALL Excel Drive Sheets for each line of the intended SO# in the ""Drive Selection Sheets"" folder", vbOKCancel)
+    If Not (Response = 1) Then
+        Response = MsgBox("File read unsuccessful, try again", vbExclamation Or vbOkayOnly)
+        Exit Sub
+    End If
+    
+    'Open SMART Sheet (from shared folder)
+    ChDrive ("S")
+    ChDir ("S:\M Series Drive Selection\Drive Selection Sheets")
+    fileArr = Application.GetOpenFilename(Title:="Select ALL Excel Drive Sheets to Load", MultiSelect:=True)
+    If Not (IsArray(fileArr)) Then Success = 0 Else Success = 1
+    If Not (Success = 1) Then
+        Response = MsgBox("File read unsuccessful, try again", vbExclamation Or vbOkayOnly)
+        Exit Sub
+    End If
+    
+    'Check how many files selected, then begin email compiling process for each sheet selected
+    currBody = ""
+    'Debug.Print UBound(fileArr)
+    'Debug.Print LBound(fileArr)
+    If Not (UBound(fileArr) = LBound(fileArr)) Then
+        'Redimension the workbook list
+        ReDim wkbList(UBound(fileArr))
+        For i = LBound(fileArr) To UBound(fileArr)
+            'Open each workbook and append to the body
+            Call closeFile(fileArr(i))
+            Set wkb = Workbooks.Open(fileArr(i))
+            Call AppendBody(wkb, wkbList, i, currBody)
+            'Debug.Print wkbList(i)
+            wkb.Close SaveChanges:=False
+        Next
+        'Pull first available workbook's job name and cut off the hyphen (-01)
+        Set wkb = Workbooks.Open(fileArr(1))
+        Set wkst = wkb.Worksheets(1)
+        Subject = wkst.Range("E2")
+        'Filter Subject by decimal digits and reassign to Subject str
+        regexOne.Pattern = "(\d+)"
+        regexOne.Global = True
+        regexOne.IgnoreCase = True
+        Set Matches = regexOne.Execute(Subject)
+        'Error handling
+        If Matches.Count = 0 Then
+            Response = MsgBox("No Shop Order Number found on Drive Sheet", vbExclamation Or vbOkayOnly)
+            Exit Sub
+        End If
+        Subject = Matches.Item(0).SubMatches(0)
+        Subject = Subject & " " & wkst.Range("E1").Value & " - Drive Selection Complete"
+        wkb.Close SaveChanges:=False
+        'After body is fully created, send email with pseudo fn
+        'Debug.Print wkbList(1)
+        Call PseudoSendMailWithWkst(wkbList, currBody, Subject)
+    Else
+        Call closeFile(fileArr(1))
+        Set wkb = Workbooks.Open(fileArr(1))
+        wkb.Worksheets(1).Range("A40") = "send"
+        wkb.Close SaveChanges:=False
+    End If
+    
+    Call ClearContentsAndReset
+End Sub
+
+Sub AppendBody(ByRef CurrWkb As Workbook, ByRef wkbList() As String, _
+               ByVal AllIdx As Integer, ByRef Body As String)
+    Dim FYI As String
+    Dim Model As String
+    Dim HP As String
+    Dim DriveRPM As String
+    Dim CalcRPM As String
+    Dim MSheave As String
+    Dim MBush As String
+    Dim BSheave As String
+    Dim BBush As String
+    Dim Belt As String
+    Dim Turns As String
+    Dim Eng As String
+    Dim Motor As String
+    Dim VFDInfo As String
+    Dim qty As Integer
+    Dim Beltqty As Integer
+    Dim wkst As Worksheet
+    Set wkst = CurrWkb.Worksheets("Sheet1")
+    
+    'Define the initializations
+    If wkst.Range("E3").Value = "" Then qty = "0" Else qty = wkst.Range("E3").Value
+    If wkst.Range("AG9").Value = "" Then Beltqty = "0" Else Beltqty = wkst.Range("AG9").Value  'Assign quantity of belts
+    Beltqty = Beltqty * qty  'Multiply by number of units
+    If wkst.Range("AG3").Value = "" Or wkst.Range("AG3").Value = "0" Then DriveRPM = "? RPM" & vbNewLine Else DriveRPM = wkst.Range("AG3").Value & " RPM" & vbNewLine
+    If wkst.Range("D11").Value = "" Then CalcRPM = "? RPM" & vbNewLine Else CalcRPM = wkst.Range("D11").Value & " RPM" & vbNewLine
+    If wkst.Range("B8").Value = "" Then HP = "? HP" & vbNewLine Else HP = wkst.Range("B8").Value & " HP" & vbNewLine
+    If wkst.Range("AG4").Value = "" Then MSheave = "??-???" Else MSheave = wkst.Range("AG4").Value
+    If wkst.Range("AG5").Value = "" Then MBush = "??-???" Else MBush = wkst.Range("AG5").Value
+    If wkst.Range("AG6").Value = "" Then BSheave = "??-???" Else BSheave = wkst.Range("AG6").Value
+    If wkst.Range("AG7").Value = "" Then BBush = "??-???" Else BBush = wkst.Range("AG7").Value
+    If wkst.Range("AG8").Value = "" Then Belt = "??-???" Else Belt = wkst.Range("AG8").Value
+    If wkst.Range("AG11").Value = "" Then Eng = "No" Else Eng = wkst.Range("AG11").Value
+    If wkst.Range("A2").Value = "" Then Model = "Model: ???? QTY: " & qty & vbNewLine Else Model = "Model: " & wkst.Range("A2").Value & " QTY: " & qty & vbNewLine
+    
+    'Handle N/As
+    MSheave = "Motor Sheave - " & MSheave & " QTY: " & qty & vbNewLine
+    If wkst.Range("AG4").Value = "N/A" Then MSheave = "Motor Sheave - N/A" & vbNewLine
+    
+    MBush = "Motor Bushing - " & MBush & " QTY: " & qty & vbNewLine
+    If wkst.Range("AG5").Value = "N/A" Then MBush = "Motor Bushing - N/A" & vbNewLine
+    
+    BSheave = "Blower Sheave - " & BSheave & " QTY: " & qty & vbNewLine
+    If wkst.Range("AG6").Value = "N/A" Then MSheave = "Blower Sheave - N/A" & vbNewLine
+    
+    BBush = "Blower Bushing - " & BBush & " QTY: " & qty & vbNewLine
+    If wkst.Range("AG7").Value = "N/A" Then MSheave = "Blower Bushing - N/A" & vbNewLine
+    
+    Belt = "Belt - " & wkst.Range("AG8").Value & " QTY: " & Beltqty & vbNewLine
+    If wkst.Range("AG8").Value = "N/A" Then MSheave = "Belt - N/A" & vbNewLine
+    
+    Turns = "Turns: " & wkst.Range("AG10").Value & vbNewLine
+    Eng = "Engineering Verified: " & wkst.Range("AG11").Value & vbNewLine
+    Motor = "Motor Specification: " & wkst.Range("A50").Value & vbNewLine
+    VFDInfo = wkst.Range("E32").Value
+    FYI = vbNewLine & vbNewLine & "Sheet2 of the Drive Selection Sheet contains alternate Drive Selections within similar parameters."
+    'Make VFDInfo more specific
+    Select Case VFDInfo
+        Case "NONE"
+            VFDInfo = "No VFD for this Unit"
+        Case Else
+            VFDInfo = "VFD Reference: " & wkst.Range("E32").Value & " - specific parameters on attached Drive Selection Sheet."
+    End Select
+    
+    'Append this information to the body string
+    Body = Body & "The following is the best-fit Drive Selection for " & wkst.Range("E2").Value & " " & wkst.Range("E1").Value & _
+                  ":" & vbNewLine & vbNewLine & Model & "Calculated RPM: " & CalcRPM & "Drive RPM: " & DriveRPM & HP & MSheave & MBush & _
+                  BSheave & BBush & Belt & Turns & Eng & Motor & VFDInfo & FYI & vbNewLine & vbNewLine & vbNewLine
+    'Append wkbName to wkbList
+    wkbList(AllIdx) = CurrWkb.FullName
+End Sub
+
+Sub PseudoSendMailWithWkst(ByRef wkbList() As String, ByVal Body As String, ByVal Subject As String)
+'Working in Excel 2000-2016
+'This example send the last saved version of the Activeworkbook
+'For Tips see: http://www.rondebruin.nl/win/winmail/Outlook/tips.htm
+    Dim OutApp As Object
+    Dim OutMail As Object
+    
+    Dim Name1 As String
+    Dim Name2 As String
+    Dim Name3 As String
+    Dim Name4 As String
+    Dim Name5 As String
+    Dim Name6 As String
+    Dim Name7 As String
+    Dim Name8 As String
+    Dim Name9 As String
+    Dim Name10 As String
+    Dim Name11 As String
+
+    Set OutApp = CreateObject("Outlook.Application")
+    Set OutMail = OutApp.CreateItem(0)
+    
+    Name1 = "mbrewer@cambridgeair.com; "
+    Name2 = "Mlintzenich@cambridgeair.com; "
+    Name3 = "klalonde@cambridgeair.com; "
+    Name4 = "dshumaker@cambridgeair.com; "
+    Name5 = "wschultz@cambridgeair.com; "
+    Name6 = "jescalante@cambridgeair.com; "
+    Name7 = "kpflueger@cambridgeair.com; "
+    Name8 = "kgarrett@cambridgeair.com; "
+    Name9 = "mbolin@cambridgeair.com; "
+    Name10 = "mharmon@cambridgeair.com; "
+    Name11 = "smelliere@cambridgeair.com; "
+    Name12 = "mtest@cambridgeair.com"  'Last name absent of semicolon and space
+ 
+    On Error Resume Next
+    With OutMail
+        .To = Name1 & Name2 & Name3 & Name4 & Name5 & Name6 & Name7 & Name8 & Name9 & Name10 & Name11 & Name12
+        .BCC = ""
+        .Subject = Subject
+        .Body = Body
+        'You can add other files also like this
+        '.Attachments.Add (wkstAtt)
+        .Display   'or use .Send
+    End With
+    On Error GoTo 0
+    
+    For i = (LBound(wkbList) + 1) To UBound(wkbList)
+        'Debug.Print wkbList(i)
+        OutMail.Attachments.Add Trim(wkbList(i))
+    Next
+
+    OutMail.Display
+    Set OutMail = Nothing
+    Set OutApp = Nothing
+End Sub
